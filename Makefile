@@ -39,7 +39,7 @@ $(BUILD_DIR)/%.c.o: %.c
 # Build step for C++ sourceS
 $(BUILD_DIR)/%.cpp.o: %.cpp
 	mkdir -p $(dir $@)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LIBS) $(INCLUDE) -g -O3 -std=c++20 -c $< -o $@ 
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LIBS) $(INCLUDE) -g -O3 -c $< -o $@ 
 
 
 .PHONY: clean
