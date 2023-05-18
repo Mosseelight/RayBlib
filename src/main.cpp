@@ -18,6 +18,8 @@ int main(void)
 
         BeginDrawing();
 
+        std::cout << GetFPS() << std::endl;
+
         if(y < SCREENHEIGHT)
         {
             for (int x = 0; x < SCREENWIDTH; x++)
