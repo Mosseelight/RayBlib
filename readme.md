@@ -7,3 +7,6 @@
 ### run gnome-session
 ### in terminal in xserver run code Documents/Codes/RayBlib
 ## Done
+
+# Have to restart vscode for source control to see the change
+# Do all changes then push beacuse after push vscode needs a restart
