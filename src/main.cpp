@@ -9,7 +9,8 @@
 Camera camera = { 0 };
 int cameraMode = CAMERA_FIRST_PERSON;
 Color background = {0, 137, 137, 255};
-Chunk chunk1(16, 16, 16, Vector3Zero());
+Chunk *chunks;
+int chunkCount = 5;
 
 void Update()
 {
@@ -37,10 +38,14 @@ void Draw()
 
         BeginMode3D(camera);
 
-        for (int i = 0; i < chunk1.cXTot * chunk1.cYTot * chunk1.cZTot; i++)
+        for (int i = 0; i < chunkCount; i++)
         {
-            DrawCube(chunk1.cPositions[i], 1, 1, 1, Color{i, 0, 0, 255});
+            for (int i = 0; i < chunks[i].cXTot * chunks[i].cYTot * chunks[i].cZTot; i++)
+            {
+                DrawCube(chunks[i].cPositions[i], 1, 1, 1, Color{i, 0, 0, 255});
+            }
         }
+        
 
         EndMode3D();
 
@@ -62,7 +67,10 @@ int main(void)
     camera.fovy = 60.0f;                                
     camera.projection = CAMERA_PERSPECTIVE;    
 
-    chunk1.AssignPositions();
+    for (int i = 0; i < chunkCount; i++)
+    {
+        chunks[i] = new Chunk(16, 16, 16, Vector3{i * 16, 0, 0});
+    }
 
     while (!WindowShouldClose())
     {
