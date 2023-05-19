@@ -5,8 +5,10 @@
 
 int main(void)
 {
-    InitWindow(SCREENWIDTH, SCREENHEIGHT - 5, "GameTesting");
-    SetTargetFPS(INT32_MAX);
+    InitWindow(SCREENWIDTH, SCREENHEIGHT, "GameTesting");
+    //if refresh rate 60 then fps should be 120 or less
+    //if refresh rate 300 then fps should be 300 or less
+    SetTargetFPS(120);
 
     Color background = {0, 137, 137, 255};
 
@@ -17,8 +19,6 @@ int main(void)
     {
 
         BeginDrawing();
-
-        std::cout << GetFPS() << std::endl;
 
         if(y < SCREENHEIGHT)
         {
