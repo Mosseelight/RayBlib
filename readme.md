@@ -32,3 +32,16 @@
         }
         y++;
     }
+
+## cube culling
+### since minecraft checks if it should render the cube if there is a air block
+### and since i dont want to create air blocks
+### we can check to see if all sides have a cube next to it
+### and not draw if true
+
+### psudeo code
+    for every cube position //find a better way to do this like getting the positions visable
+        if(cube has position on all sides)
+            dont draw
+        else
+            draw the cube
