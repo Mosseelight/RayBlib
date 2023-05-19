@@ -10,7 +10,8 @@ public:
     int cXTot = 16;
     int cYTot = 16;
     int cZTot = 16;
-    Vector3 *cPositions;
+    Vector3 *cPositions; //original chunk with all positions avaliable
+    Vector3 *cCDPositions; //generated culling that only has positions that have a "air" block next
     Vector3 position;
 
     Chunk()
@@ -25,6 +26,7 @@ public:
         cZTot = _cZTot;
         position = pos;
         cPositions = new Vector3[_cXTot * _cXTot * _cZTot];
+        cCDPositions = new Vector3[_cXTot * _cXTot * _cZTot];
     }
 
     void AssignPositions()
@@ -42,7 +44,42 @@ public:
                 
             }
         }
+    }
+
+    void ApplyArrCulling()
+    {
+        for (int i = 0; i < cXTot * cYTot * cZTot; i++)
+        {
+            if(!CheckCubeCull(cPositions[i], cPositions, cXTot * cYTot * cZTot))
+                cCDPositions[i] = cPositions[i];
+        }
+    }
+
+private:
+
+    bool CheckCubeCull(Vector3 cPos, Vector3 csPos[], int csPosSize)
+    {
+        Vector3 checkPos = { 0 };
+        int checks = 0; //if this is 6 then there is 6 cubes surrounding the cube
+        for (int i = 0; i < csPosSize; i++)
+        {
+            if(Vector3Equals(csPos[i], Vector3{cPos.x + 1, cPos.y, cPos.z})) // +1 on the x check
+                checks++;
+            if(Vector3Equals(csPos[i], Vector3{cPos.x - 1, cPos.y, cPos.z})) // -1 on the x check
+                checks++;
+            if(Vector3Equals(csPos[i], Vector3{cPos.x, cPos.y + 1, cPos.z})) // +1 on the y check
+                checks++;
+            if(Vector3Equals(csPos[i], Vector3{cPos.x, cPos.y - 1, cPos.z})) // -1 on the y check
+                checks++;
+            if(Vector3Equals(csPos[i], Vector3{cPos.x, cPos.y, cPos.z + 1})) // +1 on the z check
+                checks++;
+            if(Vector3Equals(csPos[i], Vector3{cPos.x, cPos.y, cPos.z - 1})) // -1 on the z check
+                checks++;
+        }
+        if(checks == 6)
+            return true;
         
+        return false;
     }
 
 };
