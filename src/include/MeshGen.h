@@ -13,6 +13,11 @@ public:
     Vector3 *cPositions;
     Vector3 position;
 
+    Chunk()
+    {
+        
+    }
+
     Chunk(int _cXTot, int _cYTot, int _cZTot, Vector3 pos)
     {
         cXTot = _cXTot;

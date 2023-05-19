@@ -38,11 +38,11 @@ void Draw()
 
         BeginMode3D(camera);
 
-        for (int i = 0; i < chunkCount; i++)
+        for (int c = 0; c < chunkCount; c++)
         {
-            for (int i = 0; i < chunks[i].cXTot * chunks[i].cYTot * chunks[i].cZTot; i++)
+            for (int i = 0; i < chunks[c].cXTot * chunks[c].cYTot * chunks[c].cZTot; i++)
             {
-                DrawCube(chunks[i].cPositions[i], 1, 1, 1, Color{i, 0, 0, 255});
+                DrawCube(chunks[c].cPositions[i], 1, 1, 1, Color{static_cast<u_char>(i), 0, 0, 255});
             }
         }
         
@@ -67,9 +67,12 @@ int main(void)
     camera.fovy = 60.0f;                                
     camera.projection = CAMERA_PERSPECTIVE;    
 
+    chunks = new Chunk[chunkCount];
+
     for (int i = 0; i < chunkCount; i++)
     {
-        chunks[i] = new Chunk(16, 16, 16, Vector3{i * 16, 0, 0});
+        chunks[i] = Chunk(16, 16, 16, Vector3{static_cast<float>(i * 16), 0, 0});
+        chunks[i].AssignPositions();
     }
 
     while (!WindowShouldClose())
