@@ -36,7 +36,7 @@
 ## cube culling
 ### since minecraft checks if it should render the cube if there is a air block <br> and since i dont want to create air blocks <br>  we can check to see if all sides have a cube next to it <br> and not draw if true
 
-### Once the blocks have checked because this method is intensive it should be written to a new array and those will have the blocks that will be draw <br> When a block is broken is something is changed there should be, as minecraft calls it a "chunk update" this redos the chunk check and updates the array that draws the cubes accordinly
+### Once the blocks have checked because this method is intensive it should be written to a new array and those will have the blocks that will be drawed <br> When a block is broken or something is changed there should be, as minecraft calls it a "chunk update" this redos the chunk check and updates the array that draws the cubes accordinly
 
 
 ### psudeo code
