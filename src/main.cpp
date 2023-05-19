@@ -42,6 +42,7 @@ void Draw()
         {
             for (int i = 0; i < chunks[c].cXTot * chunks[c].cYTot * chunks[c].cZTot; i++)
             {
+                //have if statement to check if caemra can see the cube and if not dont run
                 DrawCube(chunks[c].cPositions[i], 1, 1, 1, Color{static_cast<u_char>(i), 0, 0, 255});
             }
         }
