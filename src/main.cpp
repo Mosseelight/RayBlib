@@ -1,7 +1,28 @@
 #include "include/RayLib/raylib.h"
+#include "include/RayLib/raymath.h"
+#include "include/RayLib/rcamera.h"   
 #include "include/GloVars.h"
 
 #include <iostream>
+
+Camera camera = { 0 };
+int cameraMode = CAMERA_FIRST_PERSON;
+
+void Update()
+{
+    if(IsKeyPressed(KEY_W))
+    {
+        camera.position = Vector3Add(camera.position, Vector3{0,0,1});
+    }
+    UpdateCamera(&camera, cameraMode);
+}
+
+void Draw()
+{
+    BeginDrawing();
+
+    EndDrawing();
+}
 
 int main(void)
 {
@@ -12,31 +33,16 @@ int main(void)
 
     Color background = {0, 137, 137, 255};
 
-    int y = 0;
-    int x = 0;
+    camera.position = (Vector3){ 0.0f, 2.0f, 4.0f };
+    camera.target = (Vector3){ 0.0f, 2.0f, 0.0f };      
+    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };         
+    camera.fovy = 60.0f;                                
+    camera.projection = CAMERA_PERSPECTIVE;    
 
     while (!WindowShouldClose())
     {
-
-        BeginDrawing();
-
-        if(y < SCREENHEIGHT)
-        {
-            for (int x = 0; x < SCREENWIDTH; x++)
-            {
-                auto r = double(x) / (SCREENWIDTH-1);
-                auto g = double(y) / (SCREENHEIGHT-1);
-                auto b = 0.25;
-
-                u_char ir = 255.999 * r;
-                u_char ig = 255.999 * g;
-                u_char ib = 255.999 * b;
-                DrawPixel(x,y, Color{ir, ig, ib, 255});
-            }
-            y++;
-        }
-
-        EndDrawing();
+        Update();
+        Draw();
     }
 
     CloseWindow();
