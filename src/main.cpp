@@ -10,7 +10,32 @@ Camera camera = { 0 };
 int cameraMode = CAMERA_FIRST_PERSON;
 Color background = {0, 137, 137, 255};
 Chunk *chunks;
-int chunkCount = 5;
+int chunkCount = 2;
+
+bool CheckCubeCull(Vector3 cPos, Vector3 csPos[], int csPosSize)
+{
+    Vector3 checkPos = { 0 };
+    int checks = 0; //if this is 6 then there is 6 cubes surrounding the cube
+    for (int i = 0; i < csPosSize; i++)
+    {
+        if(Vector3Equals(csPos[i], Vector3{cPos.x + 1, cPos.y, cPos.z})) // +1 on the x check
+            checks++;
+        if(Vector3Equals(csPos[i], Vector3{cPos.x - 1, cPos.y, cPos.z})) // -1 on the x check
+            checks++;
+        if(Vector3Equals(csPos[i], Vector3{cPos.x, cPos.y + 1, cPos.z})) // +1 on the y check
+            checks++;
+        if(Vector3Equals(csPos[i], Vector3{cPos.x, cPos.y - 1, cPos.z})) // -1 on the y check
+            checks++;
+        if(Vector3Equals(csPos[i], Vector3{cPos.x, cPos.y, cPos.z + 1})) // +1 on the z check
+            checks++;
+        if(Vector3Equals(csPos[i], Vector3{cPos.x, cPos.y, cPos.z - 1})) // -1 on the z check
+            checks++;
+    }
+    if(checks == 6)
+        return true;
+    
+    return false;
+}
 
 void Update()
 {
@@ -29,6 +54,9 @@ void Update()
                 0.0f                                               
             },
             0.0f); 
+
+    //30 fps wiht 2 chunk full render
+    std::cout << GetFPS() << std::endl;
 }
 
 void Draw()
@@ -43,7 +71,8 @@ void Draw()
             for (int i = 0; i < chunks[c].cXTot * chunks[c].cYTot * chunks[c].cZTot; i++)
             {
                 //have if statement to check if caemra can see the cube and if not dont run
-                DrawCube(chunks[c].cPositions[i], 1, 1, 1, Color{static_cast<u_char>(i), 0, 0, 255});
+                if(!CheckCubeCull(chunks[c].cPositions[i], chunks[c].cPositions, chunks[c].cXTot * chunks[c].cYTot * chunks[c].cZTot))
+                    DrawCube(chunks[c].cPositions[i], 1, 1, 1, Color{static_cast<u_char>(i), 0, 0, 255});
             }
         }
         
