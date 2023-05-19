@@ -18,17 +18,17 @@
     int x = 0;
 
     if(y < SCREENHEIGHT)
+    {
+        for (int x = 0; x < SCREENWIDTH; x++)
         {
-            for (int x = 0; x < SCREENWIDTH; x++)
-            {
-                auto r = double(x) / (SCREENWIDTH-1);
-                auto g = double(y) / (SCREENHEIGHT-1);
-                auto b = 0.25;
+            auto r = double(x) / (SCREENWIDTH-1);
+            auto g = double(y) / (SCREENHEIGHT-1);
+            auto b = 0.25;
 
-                u_char ir = 255.999 * r;
-                u_char ig = 255.999 * g;
-                u_char ib = 255.999 * b;
-                DrawPixel(x,y, Color{ir, ig, ib, 255});
-            }
-            y++;
+            u_char ir = 255.999 * r;
+            u_char ig = 255.999 * g;
+            u_char ib = 255.999 * b;
+            DrawPixel(x,y, Color{ir, ig, ib, 255});
         }
+        y++;
+    }
