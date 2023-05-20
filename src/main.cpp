@@ -9,8 +9,9 @@
 Camera camera = { 0 };
 int cameraMode = CAMERA_FIRST_PERSON;
 Color background = {0, 137, 137, 255};
+//World *world;
 Chunk *chunks;
-int chunkCount = 9;
+int chunkCount = 5;
 
 void Update()
 {
@@ -32,6 +33,7 @@ void Update()
 
     //2 fps wiht 5 chunk full render
     //40 fps with 5 chunk with cube culling
+    //45 fps with 5 chunk smaller array of cube culling
     std::cout << GetFPS() << std::endl;
 }
 
@@ -44,13 +46,13 @@ void Draw()
 
         for (int c = 0; c < chunkCount; c++)
         {
-            for (int i = 0; i < chunks[c].cPosSize; i++)
+            for (int i = 0; i < chunks[c].; i++)
             {
                 //needed if statement to check if there is a block position that is zero
                 //which means it has not been included in the cCDpos except for the first
                 //position which is always 0
-                if(!Vector3Equals(chunks[c].cCDPositions[i], Vector3Zero()) || i == 0)
-                    DrawCube(chunks[c].cCDPositions[i], 1, 1, 1, Color{static_cast<u_char>(i), 0, 0, 255});
+                if(!Vector3Equals(chunks[c].cCDWPositions[i], Vector3Zero()) || i == 0)
+                    DrawCube(chunks[c].cCDWPositions[i], 1, 1, 1, Color{static_cast<u_char>(i), 0, 0, 255});
             }
         }
         
@@ -74,13 +76,15 @@ int main(void)
     camera.fovy = 60.0f;                                
     camera.projection = CAMERA_PERSPECTIVE;    
 
+    //world = new World(1);
+
     chunks = new Chunk[chunkCount];
 
     for (int i = 0; i < chunkCount; i++)
     {
         chunks[i] = Chunk(16, 16, 16, Vector3{static_cast<float>(i * 16), 0, 0});
         chunks[i].AssignPositions();
-        chunks[i].ApplyArrCulling();
+        chunks[i].ApplyWArrCulling();
     }
 
     while (!WindowShouldClose())
