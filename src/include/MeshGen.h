@@ -10,6 +10,8 @@ public:
     int cXTot = 16;
     int cYTot = 16;
     int cZTot = 16;
+    int cPosSize = 0;
+    int cCDPosSize = 0;
     Vector3 *cPositions; //original chunk with all positions avaliable
     Vector3 *cCDPositions; //generated culling that only has positions that have a "air" block next
     Vector3 position;
@@ -27,6 +29,7 @@ public:
         position = pos;
         cPositions = new Vector3[_cXTot * _cXTot * _cZTot];
         cCDPositions = new Vector3[_cXTot * _cXTot * _cZTot];
+        cPosSize = cXTot * cYTot * cZTot;
     }
 
     void AssignPositions()
@@ -50,8 +53,11 @@ public:
     {
         for (int i = 0; i < cXTot * cYTot * cZTot; i++)
         {
-            if(!CheckCubeCull(cPositions[i], cPositions, cXTot * cYTot * cZTot))
+            if(!CheckCubeCull(cPositions[i], cPositions, cPosSize))
+            {
                 cCDPositions[i] = cPositions[i];
+                cCDPosSize++;
+            }
         }
     }
 
@@ -59,7 +65,6 @@ private:
 
     bool CheckCubeCull(Vector3 cPos, Vector3 csPos[], int csPosSize)
     {
-        Vector3 checkPos = { 0 };
         int checks = 0; //if this is 6 then there is 6 cubes surrounding the cube
         for (int i = 0; i < csPosSize; i++)
         {

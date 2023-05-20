@@ -10,7 +10,7 @@ Camera camera = { 0 };
 int cameraMode = CAMERA_FIRST_PERSON;
 Color background = {0, 137, 137, 255};
 Chunk *chunks;
-int chunkCount = 5;
+int chunkCount = 9;
 
 void Update()
 {
@@ -31,7 +31,8 @@ void Update()
             0.0f); 
 
     //2 fps wiht 5 chunk full render
-    //std::cout << GetFPS() << std::endl;
+    //40 fps with 5 chunk with cube culling
+    std::cout << GetFPS() << std::endl;
 }
 
 void Draw()
@@ -43,14 +44,16 @@ void Draw()
 
         for (int c = 0; c < chunkCount; c++)
         {
-            for (int i = 0; i < chunks[c].cXTot * chunks[c].cYTot * chunks[c].cZTot; i++)
+            for (int i = 0; i < chunks[c].cPosSize; i++)
             {
-                //have if statement to check if caemra can see the cube and if not dont run
-                DrawCube(chunks[c].cCDPositions[i], 1, 1, 1, Color{static_cast<u_char>(i), 0, 0, 255});
+                //needed if statement to check if there is a block position that is zero
+                //which means it has not been included in the cCDpos except for the first
+                //position which is always 0
+                if(!Vector3Equals(chunks[c].cCDPositions[i], Vector3Zero()) || i == 0)
+                    DrawCube(chunks[c].cCDPositions[i], 1, 1, 1, Color{static_cast<u_char>(i), 0, 0, 255});
             }
         }
         
-
         EndMode3D();
 
     EndDrawing();
