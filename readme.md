@@ -38,6 +38,8 @@
 
 ### Once the blocks have checked because this method is intensive it should be written to a new array and those will have the blocks that will be drawed <br> When a block is broken or something is changed there should be, as minecraft calls it a "chunk update" this redos the chunk check and updates the array that draws the cubes accordinly
 
+### For chunks next to each other and on the same y level you could remove the inner part of that side and keep the outer so it does not draw 384 extra cubes <br> This would not work though if the chunk y level is on different levels so a other fix should be found <br> Getting the surrounding chunk and getting the cubes that are next from the chunk right next is the way
+
 
 ### psudeo code
     for every cube position //find a better way to do this like getting the positions visable
