@@ -1,7 +1,8 @@
 #ifndef MESHGEN_H
 #define MESHGEN_H
 
-#include "RayLib/raylib.h"
+#include "../RayLib/raylib.h"
+#include "../RayLib/raymath.h"
 #include <iostream>
 #include <vector>
 
@@ -14,8 +15,8 @@ public:
     int cPosSize = 0;
     int cCDPosSize = 0;
     Vector3 *cPositions; //original chunk with all positions avaliable
-    std::vector<Vector3> cCDPositions; //generated culling that only has positions that have a "air" block next
-    std::vector<Vector3> cCDWPositions; //All the blocks in the world put into one array for culling
+    Vector3 *cCDPositions; //generated culling that only has positions that have a "air" block next
+    std::vector<Vector3> nPositions; //neightbour positions from other chunks plus the chunks own blocks
     Vector3 position;
 
     Chunk()
@@ -30,6 +31,7 @@ public:
         cZTot = _cZTot;
         position = pos;
         cPositions = new Vector3[_cXTot * _cXTot * _cZTot];
+        cCDPositions = new Vector3[_cXTot * _cXTot * _cZTot];
         cPosSize = cXTot * cYTot * cZTot;
     }
 
@@ -50,69 +52,42 @@ public:
         }
     }
 
-    void UpdateWorldBlockArr(Chunk chunks[], int chunkAmount)
-    {
-        for (int c = 0; c < chunkAmount; c++)
-        {
-            for (int b = 0; b < chunks[c].cPosSize; b++)
-            {
-                cCDWPositions.push_back(chunks[c].cPositions[b]);
-            }
-        }
-        
-    }
-
     void ApplyCKArrCulling()
     {
         for (int i = 0; i < cXTot * cYTot * cZTot; i++)
         {
             if(!CheckCubeCullCK(cPositions[i], cPositions, cPosSize))
             {
-                cCDPositions.push_back(cPositions[i]);
+                cCDPositions[i] = cPositions[i];
                 cCDPosSize++;
             }
         }
     }
 
-    void ApplyWArrCulling()
+    //Should get only the edges of "opposite sides" of the neighbouring chunks instead of the whole thing
+    void ApplyWCKArrCulling(Chunk chks[], int ChunkAmount) 
     {
-        for (int i = 0; i < cCDWPositions.size(); i++)
+        std::vector<Chunk> chunks;
+        for (int c = 0; c < ChunkAmount; c++)
         {
-            if(!CheckCubeCullW(cCDWPositions[i], cCDWPositions, cCDWPositions.size()))
-            {
-                cCDPositions.push_back(cCDWPositions[i]);
-                cCDPosSize++;
-            }
+            if(Vector3Equals(chks[c].position, Vector3{position.x + 16, position.y, position.z})) // +1 on the x check
+                chunks.push_back(chks[c]); std::cout << chks[c].position.x << chks[c].position.y << chks[c].position.z << std::endl;
+            if(Vector3Equals(chks[c].position, Vector3{position.x - 16, position.y, position.z})) // -1 on the x check
+                chunks.push_back(chks[c]);
+            if(Vector3Equals(chks[c].position, Vector3{position.x, position.y + 16, position.z})) // +1 on the y check
+                chunks.push_back(chks[c]);
+            if(Vector3Equals(chks[c].position, Vector3{position.x, position.y - 16, position.z})) // -1 on the y check
+                chunks.push_back(chks[c]);
+            if(Vector3Equals(chks[c].position, Vector3{position.x, position.y, position.z + 16})) // +1 on the z check
+                chunks.push_back(chks[c]);
+            if(Vector3Equals(chks[c].position, Vector3{position.x, position.y, position.z - 16})) // -1 on the z check
+                chunks.push_back(chks[c]);
         }
     }
 
 private:
 
     bool CheckCubeCullCK(Vector3 cPos, Vector3 csPos[], int csPosSize)
-    {
-        int checks = 0; //if this is 6 then there is 6 cubes surrounding the cube
-        for (int i = 0; i < csPosSize; i++)
-        {
-            if(Vector3Equals(csPos[i], Vector3{cPos.x + 1, cPos.y, cPos.z})) // +1 on the x check
-                checks++;
-            if(Vector3Equals(csPos[i], Vector3{cPos.x - 1, cPos.y, cPos.z})) // -1 on the x check
-                checks++;
-            if(Vector3Equals(csPos[i], Vector3{cPos.x, cPos.y + 1, cPos.z})) // +1 on the y check
-                checks++;
-            if(Vector3Equals(csPos[i], Vector3{cPos.x, cPos.y - 1, cPos.z})) // -1 on the y check
-                checks++;
-            if(Vector3Equals(csPos[i], Vector3{cPos.x, cPos.y, cPos.z + 1})) // +1 on the z check
-                checks++;
-            if(Vector3Equals(csPos[i], Vector3{cPos.x, cPos.y, cPos.z - 1})) // -1 on the z check
-                checks++;
-        }
-        if(checks == 6)
-            return true;
-        
-        return false;
-    }
-
-    bool CheckCubeCullW(Vector3 cPos, std::vector<Vector3> csPos, int csPosSize)
     {
         int checks = 0; //if this is 6 then there is 6 cubes surrounding the cube
         for (int i = 0; i < csPosSize; i++)

@@ -2,19 +2,37 @@
 #include "include/RayLib/raymath.h"
 #include "include/RayLib/rcamera.h"   
 #include "include/GloVars.h"
-#include "include/MeshGen.h"
+#include "include/MineBorft/mineBorft.h"
 
 #include <iostream>
 
 Camera camera = { 0 };
 int cameraMode = CAMERA_FIRST_PERSON;
 Color background = {0, 137, 137, 255};
-//World *world;
-Chunk *chunks;
-int chunkCount = 5;
+
+MineBorft mineborft;
+
+bool initalize = false;
+
+bool initMineBorft = false;
+bool initPlane = false;
 
 void Update()
 {
+
+    if(!initMineBorft && IsKeyPressed(KEY_ONE))
+    {
+        mineborft.InitMineBorft();
+        initalize = true;
+        initMineBorft = true;
+    }
+
+
+    if(initMineBorft)
+    {
+        mineborft.UpdateMineBorft();
+    }
+
     UpdateCameraPro(&camera,
             (Vector3){
                 (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP))*0.1f -      
@@ -31,34 +49,21 @@ void Update()
             },
             0.0f); 
 
-    //2 fps wiht 5 chunk full render
-    //40 fps with 5 chunk with cube culling
-    //45 fps with 5 chunk smaller array of cube culling
-    std::cout << GetFPS() << std::endl;
+    //::cout << GetFPS() << std::endl;
 }
 
 void Draw()
 {
-    BeginDrawing();
-    ClearBackground(background);
-
-        BeginMode3D(camera);
-
-        for (int c = 0; c < chunkCount; c++)
-        {
-            for (int i = 0; i < chunks[c].; i++)
-            {
-                //needed if statement to check if there is a block position that is zero
-                //which means it has not been included in the cCDpos except for the first
-                //position which is always 0
-                if(!Vector3Equals(chunks[c].cCDWPositions[i], Vector3Zero()) || i == 0)
-                    DrawCube(chunks[c].cCDWPositions[i], 1, 1, 1, Color{static_cast<u_char>(i), 0, 0, 255});
-            }
-        }
-        
-        EndMode3D();
-
-    EndDrawing();
+    if(!initalize)
+    {
+        BeginDrawing();
+        ClearBackground(background);
+        EndDrawing();
+    }
+    if(initMineBorft)
+    {
+        mineborft.DrawMineBorft(background, camera);
+    }
 }
 
 int main(void)
@@ -75,17 +80,6 @@ int main(void)
     camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };         
     camera.fovy = 60.0f;                                
     camera.projection = CAMERA_PERSPECTIVE;    
-
-    //world = new World(1);
-
-    chunks = new Chunk[chunkCount];
-
-    for (int i = 0; i < chunkCount; i++)
-    {
-        chunks[i] = Chunk(16, 16, 16, Vector3{static_cast<float>(i * 16), 0, 0});
-        chunks[i].AssignPositions();
-        chunks[i].ApplyWArrCulling();
-    }
 
     while (!WindowShouldClose())
     {
