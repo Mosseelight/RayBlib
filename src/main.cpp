@@ -12,7 +12,7 @@ int cameraMode = CAMERA_FIRST_PERSON;
 Color background = {0, 137, 137, 255};
 
 MineBorft mineborft;
-PlaneSim planesim;
+PlaneSim *planesim;
 
 bool initalize = false;
 
@@ -30,7 +30,7 @@ void Update()
     }
     if(!initPlane && IsKeyPressed(KEY_TWO))
     {
-        planesim.InitPlaneSim();
+        planesim->InitPlaneSim();
         initalize = true;
         initPlane = true;
     }
@@ -41,7 +41,7 @@ void Update()
     }
     if(initPlane)
     {
-        planesim.UpdatePlaneSim(GetTime());
+        planesim->UpdatePlaneSim(GetTime());
     }
 
     UpdateCameraPro(&camera,
@@ -77,7 +77,7 @@ void Draw()
     }
     if(initPlane)
     {
-        planesim.DrawPlaneSim(background, camera);
+        planesim->DrawPlaneSim(background, camera);
     }
 }
 
@@ -94,7 +94,9 @@ int main(void)
     camera.target = (Vector3){ 0.0f, 2.0f, 0.0f };      
     camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };         
     camera.fovy = 60.0f;                                
-    camera.projection = CAMERA_PERSPECTIVE;    
+    camera.projection = CAMERA_PERSPECTIVE;
+    
+    planesim = new PlaneSim(PlaneObject(100, 40, 5, 20, 0.25, 0.5, 100, Vector3{0,0,0}, Vector3{0,0,0}, Vector3{0,0,0}));
 
     while (!WindowShouldClose())
     {

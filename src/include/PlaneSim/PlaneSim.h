@@ -11,34 +11,49 @@
 class PlaneSim
 {
 public:
+
+    PlaneObject plane;
+    PlanePhySim planephySim = PlanePhySim();
+    Vector3 pos;
+
+    float simSpeed = 0.0001f;
+
+    PlaneSim(PlaneObject _plane)
+    {
+        plane = _plane;
+    }
+
     void InitPlaneSim()
     {
-        plane = new PlaneObject(100, 40, 5, 20, 0.25, 0.5, 100, Vector3{0,0,0}, Vector3{0,0,0}, Vector3{0,0,0});
-        plane->CalculateForward();
-        plane->CalculateBackward();
-        plane->CalculateUp();
-        plane->CalculateDown();
+        plane.CalculateForward();
+        plane.CalculateBackward();
+        plane.CalculateUp();
+        plane.CalculateDown();
     }
 
     void UpdatePlaneSim(double deltaTime)
     {
-        plane->CalculateForward();
-        plane->CalculateBackward();
-        plane->CalculateUp();
-        plane->CalculateDown();
-
-        Vector3 prevPlanePos = plane->position;
+        Vector3 prevPlanePos = plane.position;
 
         //plane cal
-        /*plane->position = Vector3Scale(Vector3Multiply(plane->position, planephySim.PlaneMovDir(
-            plane->up, plane->backward, plane->forward, plane->down,
-            plane->dragCoef, plane->liftCoef, plane->thrust, plane->mass,
-            plane->speed, plane->wingSpan, plane->wingWidth
-        )), deltaTime);*/
-        plane->position = Vector3Subtract(Vector3{0,0.1f,0}, plane->position);
-        std::cout << plane->position.y << std::endl;
+        /*plane.position = Vector3Scale(Vector3Add(plane.position, planephySim.PlaneMovDir(
+            plane.up, plane.backward, plane.forward, plane.down,
+            plane.dragCoef, plane.liftCoef, plane.thrust, plane.mass,
+            plane.speed, plane.wingSpan, plane.wingWidth
+        )), simSpeed * deltaTime);*/
+        //plane.position = Vector3Scale(Vector3Add(planephySim.CalThrustDir(Vector3{0,0,1}, 1), plane.position), simSpeed * deltaTime);
+        plane.velocity = planephySim.AddRelForce(planephySim.CalThrustDir(plane.forward, plane.thrust), Vector3{-45*RAD2DEG,0,0});
+        plane.position = Vector3Add(plane.position, Vector3Scale(plane.velocity, simSpeed));
+        //plane.velocity = planephySim.AddRelForce(planephySim.CalDownDir(plane.down, plane.mass), Vector3{0,0,0});
+        //plane.position = Vector3Add(plane.position, Vector3Scale(plane.velocity, simSpeed));
+        plane.velocity = planephySim.AddRelForce(planephySim.CalDragDir(plane.backward, plane.dragCoef, plane.speed), Vector3{45*RAD2DEG,0,0});
+        plane.position = Vector3Add(plane.position, Vector3Scale(plane.velocity, simSpeed));
+        //plane.velocity = planephySim.AddRelForce(planephySim.CalLiftDir(plane.up, plane.liftCoef, plane.speed, plane.wingSpan, plane.wingWidth), Vector3{-45*RAD2DEG,0,0});
+        //plane.position = Vector3Add(plane.position, Vector3Scale(plane.velocity, simSpeed));
+        std::cout << plane.position.x << " Plane " << plane.position.y << " Plane " << plane.position.z << std::endl;
 
-        plane->calSpeed(prevPlanePos, plane->position, deltaTime);
+        plane.calSpeed(prevPlanePos, plane.position, simSpeed);
+        std::cout << plane.speed << " speed" << std::endl;
 
     }
 
@@ -49,15 +64,12 @@ public:
 
             BeginMode3D(camera);
 
-                DrawCube(plane->position, 1, 1, 1, RAYWHITE);
+                DrawCube(plane.position, 1, 1, 1, RAYWHITE);
             
             EndMode3D();
 
         EndDrawing();
     }
-private:
-    PlaneObject *plane;
-    PlanePhySim planephySim;
 };
 
 

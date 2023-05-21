@@ -8,6 +8,11 @@ class PlanePhySim
 {
 public:
 
+    PlanePhySim()
+    {
+
+    }
+
     Vector3 CalLiftDir(Vector3 up, double liftC, double speed, double wingSpan, double wingWidth)
     {
         return Vector3Scale(up, CalLiftF(liftC, speed, wingSpan, wingWidth));
@@ -35,16 +40,22 @@ public:
         Vector3Multiply(CalThrustDir(forward, thrustAmount), CalDownDir(down, mass)));
     }
 
+    Vector3 AddRelForce(Vector3 force, Vector3 objRot)
+    {
+        Matrix rotMat = MatrixRotateXYZ(objRot); 
+        return Vector3Transform(force, rotMat);
+    }
+
 private:
 
-    double gravity = -9.80665; // Gravity speed in m/s
+    double gravity = 9.80665; // Gravity speed in m/s
     double airDesnity = 1.225; // Air Density
 
     //all forces should be multipled by the direction they go
     //eg. drag would go opposite of the forward of the plane and lift would go from a cross up of the wings
     double CalDragF(double dragC, double speed) // This would be reverse of the direction of the plane
     {
-        return 0.5 * airDesnity * dragC * speed * speed;
+        return 0.5 * dragC * speed;
     }
 
     double CalDownF(double mass)

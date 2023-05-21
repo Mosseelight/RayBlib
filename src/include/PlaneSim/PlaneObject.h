@@ -26,6 +26,11 @@ public:
     Vector3 up;
     Vector3 down;
 
+    PlaneObject()
+    {
+
+    }
+
     PlaneObject(double _mass, double _wingspan, double _wingWidth, double _length, double _dragCoef, double _liftCoef, double _thrust, Vector3 _position, Vector3 _velocity, Vector3 _rotation)
     {
         mass = _mass;
@@ -42,26 +47,22 @@ public:
 
     void CalculateForward()
     {
-        Matrix rotMatrx = MatrixRotateXYZ(Vector3{0,0,rotation.y});
-        forward = Vector3Transform(Vector3{1,1,1}, rotMatrx);
-        forward = Vector3Add(forward, position);
+        forward = Vector3{0,0,1};
     }
 
     void CalculateBackward()
     {
-        Matrix rotMatrx = MatrixRotateXYZ(Vector3{0,0,rotation.y});
-        backward = Vector3Transform(Vector3{-1,-1,-1}, rotMatrx);
-        backward = Vector3Add(backward, position);
+        backward = Vector3{0,0,-1};
     }
 
     void CalculateUp()
     {
-        up = Vector3CrossProduct(backward, Vector3{1,0,0});
+        up = Vector3{0,1,0};
     }
 
     void CalculateDown()
     {
-        down = Vector3CrossProduct(forward, Vector3{1,0,0});
+        down = Vector3{0,-1,0};
     }
 
     void calSpeed(Vector3 prevPos, Vector3 curPos, double deltaTime)
