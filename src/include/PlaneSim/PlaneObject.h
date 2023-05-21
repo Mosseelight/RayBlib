@@ -18,17 +18,13 @@ public:
 
     Vector3 position; // Position of the plane
     Vector3 velocity; // Velocity of the plane
-    Vector3 rotation; // Rotation of the plane
+    Vector3 rotation; // Rotation of the plane (In Radians)
+    double speed = 0;
 
     Vector3 forward;
     Vector3 backward;
     Vector3 up;
     Vector3 down;
-
-    PlaneObject()
-    {
-
-    }
 
     PlaneObject(double _mass, double _wingspan, double _wingWidth, double _length, double _dragCoef, double _liftCoef, double _thrust, Vector3 _position, Vector3 _velocity, Vector3 _rotation)
     {
@@ -44,22 +40,33 @@ public:
         rotation = _rotation;
     }
 
-    //calculates vector at correct angle from 0,0,0
-    //then adds on the positon of the plane to get
-    //the correct forward direction
     void CalculateForward()
     {
-        Matrix rotMatrx = MatrixRotate(Vector3{0,0,1}, rotation.y);
+        Matrix rotMatrx = MatrixRotateXYZ(Vector3{0,0,rotation.y});
         forward = Vector3Transform(Vector3{1,1,1}, rotMatrx);
         forward = Vector3Add(forward, position);
     }
 
-    void CalculateBackward(double yRot)
+    void CalculateBackward()
     {
-        Matrix rotMatrx = MatrixRotate(Vector3{0,0,-1}, yRot);
-        backward = Vector3Transform(Vector3{1,1,1}, rotMatrx);
+        Matrix rotMatrx = MatrixRotateXYZ(Vector3{0,0,rotation.y});
+        backward = Vector3Transform(Vector3{-1,-1,-1}, rotMatrx);
         backward = Vector3Add(backward, position);
-        std::cout << backward.x << " " << backward.y << " " << backward.z << std::endl;
+    }
+
+    void CalculateUp()
+    {
+        up = Vector3CrossProduct(backward, Vector3{1,0,0});
+    }
+
+    void CalculateDown()
+    {
+        down = Vector3CrossProduct(forward, Vector3{1,0,0});
+    }
+
+    void calSpeed(Vector3 prevPos, Vector3 curPos, double deltaTime)
+    {
+        speed = Vector3Length(Vector3Subtract(prevPos, curPos)) / deltaTime;
     }
 
 };

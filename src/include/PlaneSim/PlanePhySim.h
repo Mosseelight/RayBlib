@@ -8,20 +8,43 @@ class PlanePhySim
 {
 public:
 
-    //all forces should be multipled by the direction they go
-    //eg. drag would go opposite of the forward of the plane and lift would go from a cross up of the wings
-    double CalDragF(double dragC, Vector3 velocity) // This would be reverse of the direction of the plane
+    Vector3 CalLiftDir(Vector3 up, double liftC, double speed, double wingSpan, double wingWidth)
     {
-        double speed = Vector3LengthSqr(velocity);
-        return 0.5 * airDesnity * dragC * speed * speed;
+        return Vector3Scale(up, CalLiftF(liftC, speed, wingSpan, wingWidth));
     }
 
-    double CalLiftF(double liftC, Vector3 velocity, double wingSpan, double wingWidth)
+    Vector3 CalDragDir(Vector3 backward, double dragC, double speed)
     {
-        //technically this means the wings are square
-        double wingArea = wingSpan * wingWidth;
-        double speed = Vector3LengthSqr(velocity);
-        return 0.5 * airDesnity * speed * wingArea * liftC;
+        return Vector3Scale(backward, CalDragF(dragC, speed));
+    }
+
+    Vector3 CalThrustDir(Vector3 forward, double thrustAmount)
+    {
+        return Vector3Scale(forward, thrustAmount);
+    }
+
+    Vector3 CalDownDir(Vector3 down, double mass)
+    {
+        return Vector3Scale(down, CalDownF(mass));
+    }
+
+    Vector3 PlaneMovDir(Vector3 up, Vector3 backward, Vector3 forward, Vector3 down, 
+    double dragC, double liftC, double thrustAmount, double mass, double speed, double wingSpan, double wingWidth)
+    {
+        return Vector3Multiply(Vector3Multiply(CalLiftDir(up, liftC, speed, wingSpan, wingWidth), CalDragDir(backward, dragC, speed)), 
+        Vector3Multiply(CalThrustDir(forward, thrustAmount), CalDownDir(down, mass)));
+    }
+
+private:
+
+    double gravity = -9.80665; // Gravity speed in m/s
+    double airDesnity = 1.225; // Air Density
+
+    //all forces should be multipled by the direction they go
+    //eg. drag would go opposite of the forward of the plane and lift would go from a cross up of the wings
+    double CalDragF(double dragC, double speed) // This would be reverse of the direction of the plane
+    {
+        return 0.5 * airDesnity * dragC * speed * speed;
     }
 
     double CalDownF(double mass)
@@ -29,21 +52,14 @@ public:
         return mass * gravity;
     }
 
-    //forward vector that moves the plane forward
-    Vector3 CalThrustDir()
+    //Lift c should change based on AOA
+    //create a function that returns 0 to 1 based on AOA as input
+    double CalLiftF(double liftC, double speed, double wingSpan, double wingWidth)
     {
-        
+        //technically this means the wings are square
+        double wingArea = wingSpan * wingWidth;
+        return 0.5 * airDesnity * speed * wingArea * liftC;
     }
-
-    Vector3 CalDragDir()
-    {
-
-    }
-
-private:
-
-    double gravity = 9.80665; // Gravity speed in m/s
-    double airDesnity = 1.225; // Air Density
 
 };
 

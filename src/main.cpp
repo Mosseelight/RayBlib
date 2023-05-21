@@ -3,7 +3,7 @@
 #include "include/RayLib/rcamera.h"   
 #include "include/GloVars.h"
 #include "include/MineBorft/mineBorft.h"
-#include "include/PlaneSim/PlaneObject.h"
+#include "include/PlaneSim/PlaneSim.h"
 
 #include <iostream>
 
@@ -12,13 +12,12 @@ int cameraMode = CAMERA_FIRST_PERSON;
 Color background = {0, 137, 137, 255};
 
 MineBorft mineborft;
+PlaneSim planesim;
 
 bool initalize = false;
 
 bool initMineBorft = false;
 bool initPlane = false;
-
-PlaneObject plane;
 
 void Update()
 {
@@ -29,11 +28,20 @@ void Update()
         initalize = true;
         initMineBorft = true;
     }
-
+    if(!initPlane && IsKeyPressed(KEY_TWO))
+    {
+        planesim.InitPlaneSim();
+        initalize = true;
+        initPlane = true;
+    }
 
     if(initMineBorft)
     {
         mineborft.UpdateMineBorft();
+    }
+    if(initPlane)
+    {
+        planesim.UpdatePlaneSim(GetTime());
     }
 
     UpdateCameraPro(&camera,
@@ -67,6 +75,10 @@ void Draw()
     {
         mineborft.DrawMineBorft(background, camera);
     }
+    if(initPlane)
+    {
+        planesim.DrawPlaneSim(background, camera);
+    }
 }
 
 int main(void)
@@ -83,9 +95,6 @@ int main(void)
     camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };         
     camera.fovy = 60.0f;                                
     camera.projection = CAMERA_PERSPECTIVE;    
-
-    plane.CalculateForward();
-    plane.CalculateBackward(45 * DEG2RAD);
 
     while (!WindowShouldClose())
     {
