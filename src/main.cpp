@@ -3,6 +3,7 @@
 #include "include/RayLib/rcamera.h"   
 #include "include/GloVars.h"
 #include "include/MineBorft/mineBorft.h"
+#include "include/PlaneSim/PlaneObject.h"
 
 #include <iostream>
 
@@ -16,6 +17,8 @@ bool initalize = false;
 
 bool initMineBorft = false;
 bool initPlane = false;
+
+PlaneObject plane;
 
 void Update()
 {
@@ -80,6 +83,9 @@ int main(void)
     camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };         
     camera.fovy = 60.0f;                                
     camera.projection = CAMERA_PERSPECTIVE;    
+
+    plane.CalculateForward();
+    plane.CalculateBackward(45 * DEG2RAD);
 
     while (!WindowShouldClose())
     {

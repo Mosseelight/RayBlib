@@ -1,0 +1,8 @@
+Plane:
+    Model
+    velocity, mass, direction, angle, and whatever
+    physical properties like drag
+
+Simulation:
+    update the plane with Runge kutta (RK4)
+    drag, force, lift, velocity calculations
