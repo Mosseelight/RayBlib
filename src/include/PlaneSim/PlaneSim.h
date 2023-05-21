@@ -16,7 +16,7 @@ public:
     PlanePhySim planephySim = PlanePhySim();
     Vector3 pos;
 
-    float simSpeed = 0.0001f;
+    float simSpeed = 0.01f;
 
     PlaneSim(PlaneObject _plane)
     {
@@ -36,20 +36,13 @@ public:
         Vector3 prevPlanePos = plane.position;
 
         //plane cal
-        /*plane.position = Vector3Scale(Vector3Add(plane.position, planephySim.PlaneMovDir(
-            plane.up, plane.backward, plane.forward, plane.down,
-            plane.dragCoef, plane.liftCoef, plane.thrust, plane.mass,
-            plane.speed, plane.wingSpan, plane.wingWidth
-        )), simSpeed * deltaTime);*/
-        //plane.position = Vector3Scale(Vector3Add(planephySim.CalThrustDir(Vector3{0,0,1}, 1), plane.position), simSpeed * deltaTime);
-        plane.velocity = planephySim.AddRelForce(planephySim.CalThrustDir(plane.forward, plane.thrust), Vector3{-45*RAD2DEG,0,0});
+        plane.velocity = planephySim.AddRelForce(planephySim.CalLiftDir(
+            plane.velocity, Vector3{1,0,0}, plane.liftCoef, 
+            plane.speed, 45
+        ), Vector3{0, 0, 0});
         plane.position = Vector3Add(plane.position, Vector3Scale(plane.velocity, simSpeed));
-        //plane.velocity = planephySim.AddRelForce(planephySim.CalDownDir(plane.down, plane.mass), Vector3{0,0,0});
-        //plane.position = Vector3Add(plane.position, Vector3Scale(plane.velocity, simSpeed));
-        plane.velocity = planephySim.AddRelForce(planephySim.CalDragDir(plane.backward, plane.dragCoef, plane.speed), Vector3{45*RAD2DEG,0,0});
+        plane.velocity = planephySim.AddRelForce(planephySim.CalThrustDir(Vector3{0,0,1}, 3), Vector3{0, 0, 0});
         plane.position = Vector3Add(plane.position, Vector3Scale(plane.velocity, simSpeed));
-        //plane.velocity = planephySim.AddRelForce(planephySim.CalLiftDir(plane.up, plane.liftCoef, plane.speed, plane.wingSpan, plane.wingWidth), Vector3{-45*RAD2DEG,0,0});
-        //plane.position = Vector3Add(plane.position, Vector3Scale(plane.velocity, simSpeed));
         std::cout << plane.position.x << " Plane " << plane.position.y << " Plane " << plane.position.z << std::endl;
 
         plane.calSpeed(prevPlanePos, plane.position, simSpeed);

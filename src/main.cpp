@@ -96,7 +96,7 @@ int main(void)
     camera.fovy = 60.0f;                                
     camera.projection = CAMERA_PERSPECTIVE;
     
-    planesim = new PlaneSim(PlaneObject(100, 40, 5, 20, 0.25, 0.5, 100, Vector3{0,0,0}, Vector3{0,0,0}, Vector3{0,0,0}));
+    planesim = new PlaneSim(PlaneObject(100, 40, 5, 20, 0.25, 0.1, 100, Vector3{0,0,0}, Vector3{0,0,0}, Vector3{0,0,0}));
 
     while (!WindowShouldClose())
     {

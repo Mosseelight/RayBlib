@@ -70,6 +70,11 @@ public:
         speed = Vector3Length(Vector3Subtract(prevPos, curPos)) / deltaTime;
     }
 
+    void CalVelocity(Vector3 prevPos, Vector3 curPos, double deltaTime)
+    {
+        velocity = Vector3Subtract(prevPos, curPos);
+    }
+
 };
 
 #endif
